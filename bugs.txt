@@ -1,1 +1,1 @@
-(1) Error when filter in findAllAlarm
+(1) Error when filter in findAllAlarm(2) Enhance add export store data to excel, please refert to http://edspencer.net/2009/11/24/ext-ux-exporter-export-any-grid-to-excel-or-csv/
