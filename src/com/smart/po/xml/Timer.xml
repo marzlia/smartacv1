@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Timer">
+	<typeAlias alias="timer" type="com.smart.po.Timer" />
+	<typeAlias alias="page" type="com.smart.core.Page" />
+
+	<parameterMap class="timer" id="pm_timer_without_id">
+		<parameter property="timerBegin" />
+		<parameter property="timerEnd" />
+		<parameter property="cycleId" javaType="integer" jdbcType="NUMBER" />
+		<parameter property="timerEnable" javaType="integer" jdbcType="NUMBER" />
+		<parameter property="timerCreatenew" javaType="integer" jdbcType="NUMBER" />
+		<parameter property="timerTask" javaType="string" jdbcType="VARCHAR" />
+	</parameterMap>
+	<sql id="byTimerIdCondition"><![CDATA[timerId = #timerId:NUMBER#]]></sql>
+
+	<insert id="save" parameterMap="pm_timer_without_id">
+		<![CDATA[
+			INSERT INTO t_timer 
+					(timerBegin,timerEnd,cycleId,timerEnable,timerCreatenew,timerTask)
+				VALUES (?,?,?,?,?,?)
+		]]>
+		<selectKey resultClass="long">
+			<![CDATA[
+				SELECT @@IDENTITY AS ID
+			]]>
+		</selectKey>
+	</insert>
+
+	<delete id="deleteById" parameterClass="integer">
+		<![CDATA[
+			delete from t_timer
+		]]>
+		<dynamic prepend="where">
+			<include refid="byTimerIdCondition" />
+		</dynamic>
+	</delete>
+
+	<update id="update" parameterClass="timer">
+		<![CDATA[UPDATE t_timer]]>
+		<dynamic prepend="SET">
+			<isNotNull property="timerBegin" prepend=",">
+				<![CDATA[
+					timerBegin = #timerBegin:DATETIME#
+				]]>
+			</isNotNull>
+			<isNotNull property="timerEnd" prepend=",">
+				<![CDATA[
+					timerEnd = #timerEnd:DATETIME#
+				]]>
+			</isNotNull>
+			<isNotNull property="cycleId" prepend=",">
+				<![CDATA[
+					cycleId = #cycleId:NUMBER#
+				]]>
+			</isNotNull>
+			<isNotNull property="timerEnable" prepend=",">
+				<![CDATA[
+					timerEnable = #timerEnable:NUMBER#
+				]]>
+			</isNotNull>
+			<isNotNull property="timerCreatenew" prepend=",">
+				<![CDATA[
+					timerCreatenew = #timerCreatenew:NUMBER#
+				]]>
+			</isNotNull>
+			<isNotNull property="timerTask" prepend=",">
+				<![CDATA[
+					timerTask = #timerTask:VARCHAR#
+				]]>
+			</isNotNull>
+		</dynamic>
+		<dynamic prepend="where">
+			<include refid="byTimerIdCondition" />
+		</dynamic>
+	</update>
+
+	<sql id="findTimerByPageCondition">
+		<isNotEmpty property="conditions">
+			<iterate property="conditions" open="(" close=")" conjunction="OR">
+				<![CDATA[
+					upper(timerTask) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cycleName) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+				]]>
+			</iterate>
+		</isNotEmpty>
+	</sql>
+
+	<select id="findByPage" parameterClass="page" resultClass="timer">
+		<![CDATA[
+			SELECT  * FROM v_timer 
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findTimerByPageCondition" />
+		</dynamic>
+		<![CDATA[
+			ORDER BY $objCondition$ LIMIT $start$,$limit$
+		]]>
+	</select>
+
+	<select id="findByCount" parameterClass="page" resultClass="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM v_timer
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findTimerByPageCondition" />
+		</dynamic>
+	</select>
+</sqlMap>

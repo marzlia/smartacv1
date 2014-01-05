@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+           
+	<bean name="sysAction" class="com.smart.action.SysAction" scope="prototype">
+		<property name="sysService" ref="sysService" />
+	</bean>
+	
+	<bean name="userAction" class="com.smart.action.UserAction" scope="prototype">
+		<property name="userService" ref="userService" />
+	</bean>
+	
+	<bean name="groupAction" class="com.smart.action.GroupAction" scope="prototype">
+		<property name="groupService" ref="groupService" />
+	</bean>
+	
+	<bean name="privAction" class="com.smart.action.PrivAction" scope="prototype">
+		<property name="privService" ref="privService" />
+	</bean>
+	
+	<bean name="privassignAction" class="com.smart.action.PrivassignAction" scope="prototype">
+		<property name="privassignService" ref="privassignService" />
+	</bean>
+	
+	<bean name="gateAction" class="com.smart.action.GateAction" scope="prototype">
+		<property name="gateService" ref="gateService" />
+	</bean>
+	
+	<bean name="accessAction" class="com.smart.action.AccessAction" scope="prototype">
+		<property name="accessService" ref="accessService" />
+	</bean>
+	
+	<bean name="alarmAction" class="com.smart.action.AlarmAction" scope="prototype">
+		<property name="alarmService" ref="alarmService" />
+	</bean>
+	
+	<bean name="timerAction" class="com.smart.action.TimerAction" scope="prototype">
+		<property name="timerService" ref="timerService" />
+	</bean>
+	
+	<bean name="cycleAction" class="com.smart.action.CycleAction" scope="prototype">
+		<property name="cycleService" ref="cycleService" />
+	</bean>
+	
+	<bean name="watcherAction" class="com.smart.action.WatcherAction" scope="prototype">
+		<property name="watcherService" ref="watcherService" />
+	</bean>
+	
+	<bean name="blockAction" class="com.smart.action.BlockAction" scope="prototype">
+		<property name="blockService" ref="blockService" />
+	</bean>
+	
+	<bean name="cardAction" class="com.smart.action.CardAction" scope="prototype">
+		<property name="cardService" ref="cardService" />
+	</bean>
+</beans>

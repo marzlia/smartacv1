@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Privassign">
+	<typeAlias alias="privassign" type="com.smart.po.Privassign" />
+	<typeAlias alias="page" type="com.smart.core.Page" />
+
+	<parameterMap class="privassign" id="pm_privassign_without_id">
+		<parameter property="groupId" javaType="integer" jdbcType="NUMBER" />
+		<parameter property="privId" javaType="integer" jdbcType="NUMBER" />
+	</parameterMap>
+	<sql id="byPrivassignIdCondition"><![CDATA[privassignId = #privassignId:NUMBER#]]></sql>
+
+	<insert id="save" parameterMap="pm_privassign_without_id">
+		<![CDATA[
+			INSERT INTO t_privassign 
+					(groupId,privId)
+				VALUES (?,?)
+		]]>
+		<selectKey resultClass="int">
+			<![CDATA[
+				SELECT @@IDENTITY AS ID
+			]]>
+		</selectKey>
+	</insert>
+
+	<delete id="deleteByGroupIdAndPrivId" parameterClass="privassign">
+		<![CDATA[
+			delete from t_privassign
+		]]>
+		<dynamic prepend="where">
+			<![CDATA[
+				privId = #privId:NUMBER# AND groupId = #groupId:NUMBER#
+			]]>
+		</dynamic>
+	</delete>
+	
+	<delete id="deleteById" parameterClass="integer">
+		<![CDATA[
+			delete from t_privassign
+		]]>
+		<dynamic prepend="where">
+			<include refid="byPrivassignIdCondition" />
+		</dynamic>
+	</delete>
+
+	<update id="update" parameterClass="privassign">
+		<![CDATA[UPDATE t_privassign]]>
+		<dynamic prepend="SET">
+			<isNotNull property="groupId" prepend=",">
+				<![CDATA[
+					groupId = #groupId:NUMBER#
+				]]>
+			</isNotNull>
+			<isNotNull property="privId" prepend=",">
+				<![CDATA[
+					privId = #privId:NUMBER#
+				]]>
+			</isNotNull>
+		</dynamic>
+		<dynamic prepend="where">
+			<include refid="byPrivassignIdCondition" />
+		</dynamic>
+	</update>
+
+	<sql id="findPrivassignByPageCondition">
+		<isNotEmpty property="conditions">
+			<iterate property="conditions" open="(" close=")" conjunction="OR">
+				<![CDATA[
+					upper(privName) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(privDesc) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+				]]>
+			</iterate>
+		</isNotEmpty>
+	</sql>
+	
+	<sql id="findPrivInGroup">
+		<isNotNull property="objCondition">
+				<![CDATA[
+					 groupId = #objCondition:NUMBER#
+				]]>
+		</isNotNull>
+	</sql>
+
+	<select id="findByPage" parameterClass="page" resultClass="privassign">
+		<![CDATA[
+			SELECT  * FROM v_privassign 
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findPrivInGroup" />
+		</dynamic>
+		<![CDATA[
+			ORDER BY privassignId LIMIT $start$,$limit$
+		]]>
+	</select>
+
+	<select id="findByCount" parameterClass="page" resultClass="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM v_privassign
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findPrivInGroup" />
+		</dynamic>
+	</select>
+	
+	<select id="findByGroup" parameterClass="integer" resultClass="integer">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_privassign
+		]]>
+		<dynamic prepend="WHERE">
+			<![CDATA[groupId = #groupId:NUMBER#]]>
+		</dynamic>
+	</select>
+</sqlMap>

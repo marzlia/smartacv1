@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Gate">
+	<typeAlias alias="gate" type="com.smart.po.Gate" />
+	<typeAlias alias="page" type="com.smart.core.Page" />
+
+	<parameterMap class="gate" id="pm_gate_without_id">
+		<parameter property="gateIp" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="gateMac" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="gateCampus" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="gateRoom" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="gateStatus" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="gateErrcode" javaType="integer" jdbcType="NUMBER" />
+		<parameter property="gateRefresh" />
+	</parameterMap>
+	<sql id="byGateIdCondition"><![CDATA[gateId = #gateId:NUMBER#]]></sql>
+
+	<insert id="save" parameterMap="pm_gate_without_id">
+		<![CDATA[
+			INSERT INTO t_gate 
+					(gateIp,gateMac,gateCampus,gateRoom,gateStatus,gateErrcode,gateRefresh)
+				VALUES (?,?,?,?,?,?,?)
+		]]>
+		<selectKey resultClass="long">
+			<![CDATA[
+				SELECT @@IDENTITY AS ID
+			]]>
+		</selectKey>
+	</insert>
+
+	<delete id="deleteById" parameterClass="integer">
+		<![CDATA[
+			delete from t_gate
+		]]>
+		<dynamic prepend="where">
+			<include refid="byGateIdCondition" />
+		</dynamic>
+		<![CDATA[
+			AND (SELECT gateId from t_access 
+		]]>
+		<dynamic prepend="where">
+			<include refid="byGateIdCondition" />
+		</dynamic>
+		<![CDATA[
+			 LIMIT 1) IS NULL
+		]]>
+	</delete>
+
+	<update id="update" parameterClass="gate">
+		<![CDATA[UPDATE t_gate]]>
+		<dynamic prepend="SET">
+			<isNotNull property="gateIp" prepend=",">
+				<![CDATA[
+					gateIp = #gateIp:VARCHAR#
+				]]>
+			</isNotNull>
+			<isNotNull property="gateMac" prepend=",">
+				<![CDATA[
+					gateMac = #gateMac:VARCHAR#
+				]]>
+			</isNotNull>
+			<isNotNull property="gateCampus" prepend=",">
+				<![CDATA[
+					gateCampus = #gateCampus:VARCHAR#
+				]]>
+			</isNotNull>
+			<isNotNull property="gateRoom" prepend=",">
+				<![CDATA[
+					gateRoom = #gateRoom:VARCHAR#
+				]]>
+			</isNotNull>
+			<isNotNull property="gateStatus" prepend=",">
+				<![CDATA[
+					gateStatus = #gateStatus:VARCHAR#
+				]]>
+			</isNotNull>
+			<isNotNull property="gateErrcode" prepend=",">
+				<![CDATA[
+					gateErrcode = #gateErrcode:NUMBER#
+				]]>
+			</isNotNull>
+			<isNotNull property="gateRefresh" prepend=",">
+				<![CDATA[
+					gateRefresh = #gateRefresh:DATETIME#
+				]]>
+			</isNotNull>
+		</dynamic>
+		<dynamic prepend="where">
+			<include refid="byGateIdCondition" />
+		</dynamic>
+	</update>
+
+	<sql id="findGateByPageCondition">
+		<isNotEmpty property="conditions">
+			<iterate property="conditions" open="(" close=")" conjunction="OR">
+				<![CDATA[
+					upper(gateIp) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(gateCampus) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(gateRoom) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(gateStatus) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+				]]>
+			</iterate>
+		</isNotEmpty>
+	</sql>
+
+	<select id="findByPage" parameterClass="page" resultClass="gate">
+		<![CDATA[
+			SELECT  * FROM t_gate 
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findGateByPageCondition" />
+		</dynamic>
+		<![CDATA[
+			ORDER BY $objCondition$ LIMIT $start$,$limit$
+		]]>
+	</select>
+
+	<select id="findByCount" parameterClass="page" resultClass="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_gate
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findGateByPageCondition" />
+		</dynamic>
+	</select>
+</sqlMap>

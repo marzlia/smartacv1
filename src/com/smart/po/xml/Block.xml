@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Block">
+	<typeAlias alias="block" type="com.smart.po.Block" />
+	<typeAlias alias="page" type="com.smart.core.Page" />
+
+	<parameterMap class="block" id="pm_block_without_id">
+		<parameter property="cardId" javaType="long" jdbcType="NUMBER" />
+		<parameter property="userId" javaType="integer" jdbcType="NUMBER" />
+		<parameter property="blockDatetime" javaType="java.util.Date" jdbcType="DATETIME" />
+		<parameter property="blockReason" javaType="string" jdbcType="VARCHAR" />
+	</parameterMap>
+	<sql id="byBlockIdCondition"><![CDATA[blockId = #blockId:NUMBER#]]></sql>
+
+	<insert id="save" parameterMap="pm_block_without_id">
+		<![CDATA[
+			INSERT INTO t_block 
+					(cardId,userId,blockDatetime,blockReason)
+				VALUES (?,?,?,?)
+		]]>
+		<selectKey resultClass="int">
+			<![CDATA[
+				SELECT @@IDENTITY AS ID
+			]]>
+		</selectKey>
+	</insert>
+
+	<delete id="deleteById" parameterClass="integer">
+		<![CDATA[
+			delete from t_block
+		]]>
+		<dynamic prepend="where">
+			<include refid="byBlockIdCondition" />
+		</dynamic>
+	</delete>
+
+	<update id="update" parameterClass="block">
+		<![CDATA[UPDATE t_block]]>
+		<dynamic prepend="SET">
+			<isNotNull property="cardId" prepend=",">
+				<![CDATA[
+					cardId = #cardId:NUMBER#
+				]]>
+			</isNotNull>
+			<isNotNull property="userId" prepend=",">
+				<![CDATA[
+					userId = #userId:NUMBER#
+				]]>
+			</isNotNull>
+			<isNotNull property="blockDatetime" prepend=",">
+				<![CDATA[
+					blockDatetime = #blockDatetime:DATETIME#
+				]]>
+			</isNotNull>
+			<isNotNull property="blockReason" prepend=",">
+				<![CDATA[
+					blockReason = #blockReason:VARCHAR#
+				]]>
+			</isNotNull>
+		</dynamic>
+		<dynamic prepend="where">
+			<include refid="byBlockIdCondition" />
+		</dynamic>
+	</update>
+
+	<sql id="findBlockByPageCondition">
+		<isNotEmpty property="conditions">
+			<iterate property="conditions" open="(" close=")" conjunction="OR">
+				<![CDATA[
+					upper(blockReason) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(userName) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(groupName) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardNo) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardName) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardSex) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardType) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardClass) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardMajor) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardDepartment) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardInstitute) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardComment) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+				]]>
+			</iterate>
+		</isNotEmpty>
+	</sql>
+
+	<select id="findByPage" parameterClass="page" resultClass="block">
+		<![CDATA[
+			SELECT  * FROM v_block 
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findBlockByPageCondition" />
+		</dynamic>
+		<![CDATA[
+			ORDER BY $objCondition$ LIMIT $start$,$limit$
+		]]>
+	</select>
+
+	<select id="findByCount" parameterClass="page" resultClass="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM v_block
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findBlockByPageCondition" />
+		</dynamic>
+	</select>
+</sqlMap>

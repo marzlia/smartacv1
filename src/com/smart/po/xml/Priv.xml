@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Priv">
+	<typeAlias alias="priv" type="com.smart.po.Priv" />
+	<typeAlias alias="page" type="com.smart.core.Page" />
+
+	<parameterMap class="priv" id="pm_priv_without_id">
+		<parameter property="privName" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="privDesc" javaType="string" jdbcType="VARCHAR" />
+	</parameterMap>
+	<sql id="byPrivIdCondition"><![CDATA[privId = #privId:NUMBER#]]></sql>
+
+	<insert id="save" parameterMap="pm_priv_without_id">
+		<![CDATA[
+			INSERT INTO t_priv 
+					(privName,privDesc)
+				VALUES (?,?)
+		]]>
+		<selectKey resultClass="int">
+			<![CDATA[
+				SELECT @@IDENTITY AS ID
+			]]>
+		</selectKey>
+	</insert>
+
+	<delete id="deleteById" parameterClass="integer">
+		<![CDATA[
+			delete from t_priv
+		]]>
+		<dynamic prepend="where">
+			<include refid="byPrivIdCondition" />
+		</dynamic>
+	</delete>
+
+	<update id="update" parameterClass="priv">
+		<![CDATA[UPDATE t_priv]]>
+		<dynamic prepend="SET">
+			<isNotNull property="privName" prepend=",">
+				<![CDATA[
+					privName = #privName:VARCHAR#
+				]]>
+			</isNotNull>
+			<isNotNull property="privDesc" prepend=",">
+				<![CDATA[
+					privDesc = #privDesc:VARCHAR#
+				]]>
+			</isNotNull>
+		</dynamic>
+		<dynamic prepend="where">
+			<include refid="byPrivIdCondition" />
+		</dynamic>
+	</update>
+
+	<sql id="findPrivByPageCondition">
+		<isNotEmpty property="conditions">
+			<iterate property="conditions" open="(" close=")" conjunction="OR">
+				<![CDATA[
+					upper(privName) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(privDesc) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+				]]>
+			</iterate>
+		</isNotEmpty>
+	</sql>
+	
+	<sql id="findPrivNotInGroup">
+		<isNotNull property="objCondition">
+				<![CDATA[
+					privId NOT IN (SELECT privId FROM t_privassign WHERE groupId = #objCondition:NUMBER# ) 
+				]]>
+		</isNotNull>
+	</sql>
+
+	<select id="findByPage" parameterClass="page" resultClass="priv">
+		<![CDATA[
+			SELECT  * FROM t_priv 
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findPrivNotInGroup" />
+		</dynamic>
+		<![CDATA[
+			ORDER BY privId LIMIT $start$,$limit$
+		]]>
+	</select>
+
+	<select id="findByCount" parameterClass="page" resultClass="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_priv
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findPrivNotInGroup" />
+		</dynamic>
+	</select>
+</sqlMap>

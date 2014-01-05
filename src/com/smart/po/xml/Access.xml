@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Access">
+	<typeAlias alias="access" type="com.smart.po.Access" />
+	<typeAlias alias="accesspage" type="com.smart.core.AccessPage" />
+	<typeAlias alias="aggregation" type="com.smart.po.Aggregation" />
+	<typeAlias alias="data" type="com.smart.core.Data" />
+	<typeAlias alias="accessdata" type="com.smart.core.AccessData" />
+	<typeAlias alias="category" type="com.smart.po.Category" />
+	<typeAlias alias="treenode" type="com.smart.po.TreeNode" />
+
+	<parameterMap class="access" id="pm_access_without_id">
+		<parameter property="cardId" javaType="integer" jdbcType="NUMBER" />
+		<parameter property="gateId" javaType="integer" jdbcType="NUMBER" />
+		<parameter property="accessDatetime" />
+		<parameter property="accessDirection" javaType="integer" jdbcType="NUMBER" />
+	</parameterMap>
+	<sql id="byAccessIdCondition"><![CDATA[accessId = #accessId:NUMBER#]]></sql>
+
+	<insert id="save" parameterMap="pm_access_without_id">
+		<![CDATA[
+			INSERT INTO t_access 
+					(cardId,gateId,accessDatetime,accessDirection)
+				VALUES (?,?,?,?)
+		]]>
+		<selectKey resultClass="int">
+			<![CDATA[
+				SELECT @@IDENTITY AS ID
+			]]>
+		</selectKey>
+	</insert>
+
+	<delete id="deleteById" parameterClass="integer">
+		<![CDATA[
+			delete from t_access
+		]]>
+		<dynamic prepend="where">
+			<include refid="byAccessIdCondition" />
+		</dynamic>
+	</delete>
+
+	<update id="update" parameterClass="access">
+		<![CDATA[UPDATE t_access]]>
+		<dynamic prepend="SET">
+			<isNotNull property="cardId" prepend=",">
+				<![CDATA[
+					cardId = #cardId:NUMBER#
+				]]>
+			</isNotNull>
+			<isNotNull property="gateId" prepend=",">
+				<![CDATA[
+					gateId = #gateId:NUMBER#
+				]]>
+			</isNotNull>
+			<isNotNull property="accessDatetime" prepend=",">
+				
+			</isNotNull>
+			<isNotNull property="accessDirection" prepend=",">
+				<![CDATA[
+					accessDirection = #accessDirection:NUMBER#
+				]]>
+			</isNotNull>
+		</dynamic>
+		<dynamic prepend="where">
+			<include refid="byAccessIdCondition" />
+		</dynamic>
+	</update>
+
+	<sql id="findAccessByPageCondition">
+		<isNotEmpty property="conditions" prepend="AND">
+			<iterate property="conditions" open="(" close=")" conjunction="OR">
+				<![CDATA[
+					upper(cardNo) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardName) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardSex) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardType) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardClass) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardMajor) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardDepartment) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardInstitute) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(gateIp) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(gateCampus) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(gateRoom) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+				]]>
+			</iterate>
+		</isNotEmpty>
+		<isNotNull property="startDate" prepend="AND">
+			<![CDATA[
+				accessDatetime >= #startDate:DATETIME#
+			]]>
+		</isNotNull>
+		<isNotNull property="endDate" prepend="AND">
+			<![CDATA[
+				accessDatetime < #endDate:DATETIME#
+			]]>
+		</isNotNull>
+		<isNotEmpty property="filter" prepend="AND">
+			<iterate property="filter" open="(" close=")" conjunction="AND">
+				<![CDATA[
+					$filter[]$
+				]]>
+			</iterate>
+		</isNotEmpty>
+		<isNotEmpty property="parentList" prepend="AND">
+			<iterate property="parentList" open="(" close=")" conjunction="AND">
+				<![CDATA[
+					$parentList[]$
+				]]>
+			</iterate>
+		</isNotEmpty>
+		<isNotNull property="key" prepend="AND">
+			<isNotEmpty property="valueList">
+				<![CDATA[$key$]]>
+				<iterate property="valueList" open="in (" close=")" conjunction=",">
+					<![CDATA[
+						#valueList[]:VARCHAR#
+					]]>
+				</iterate>
+			</isNotEmpty>
+			<isEmpty property="valueList">
+				<![CDATA[$key$ = NULL ]]>
+			</isEmpty>
+		</isNotNull>
+	</sql>
+
+	<select id="findByPage" parameterClass="accesspage" resultClass="access">
+		<![CDATA[
+			SELECT  * FROM v_access 
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findAccessByPageCondition" />
+		</dynamic>
+		<![CDATA[
+			ORDER BY $objCondition$ LIMIT $start$,$limit$
+		]]>
+	</select>
+
+	<select id="findByCount" parameterClass="accesspage" resultClass="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM v_access
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findAccessByPageCondition" />
+		</dynamic>
+	</select>
+	
+	<sql id="findAccessByTime">
+		<![CDATA[
+			accessDatetime >= #start:DATETIME# AND accessDatetime < #end:DATETIME#
+		]]>
+	</sql>
+	
+	<select id="findAggList" parameterClass="data" resultClass="aggregation">
+		<![CDATA[
+			SELECT COUNT(*) aggCount, $groupColumn$ aggName from v_access
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findAccessByTime" />
+		</dynamic>
+		<![CDATA[
+			group by aggName order by aggCount DESC
+		]]>
+	</select>
+	
+	<select id="findAggCount" parameterClass="data" resultClass="int">
+		<![CDATA[
+			SELECT COUNT(aggName) FROM (SELECT $groupColumn$ aggName FROM v_access 
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findAccessByTime" />
+		</dynamic>
+		<![CDATA[
+			group by aggName) as T
+		]]>
+	</select>
+	
+	<select id="findCategory" parameterClass="category" resultClass="treenode">
+		<![CDATA[
+			SELECT DISTINCT($key$) text, false checked, true leaf from v_access  
+		]]>
+		<dynamic prepend="WHERE">
+			<isNotEmpty property="parentList">
+				<iterate property="parentList" open="(" close=")" conjunction="AND">
+					<![CDATA[
+						$parentList[]$
+					]]>
+				</iterate>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="findAccessCount" parameterClass="accessdata" remapResults="true" resultClass="java.util.HashMap">
+		<![CDATA[
+			SELECT #name:VARCHAR# as name
+		]]>
+		<dynamic>
+			<isNotNull property="key">
+				<isNotEmpty property="valueList" prepend=",">
+					<iterate property="valueList" open="" close="" conjunction=",">
+						<![CDATA[
+							(SELECT count(*) from v_access 
+								where DATE_FORMAT(accessDatetime,#timeFormat:VARCHAR#)=#name:VARCHAR#
+								AND $key$= #valueList[]:VARCHAR#
+						]]>
+						<isNotNull property="startDate" prepend="AND">
+							<![CDATA[
+								accessDatetime >= #startDate:DATETIME#
+							]]>
+						</isNotNull>
+						<isNotNull property="endDate" prepend="AND">
+							<![CDATA[
+								accessDatetime < #endDate:DATETIME#
+							]]>
+						</isNotNull>
+						<isNotEmpty property="parentList" prepend="AND">
+							<iterate property="parentList" open="(" close=")" conjunction="AND">
+								<![CDATA[
+									$parentList[]$
+								]]>
+							</iterate>
+						</isNotEmpty>
+						<![CDATA[
+							) as $key$_$valueList[]$
+						]]>
+					</iterate>
+				</isNotEmpty>
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+</sqlMap>

@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<include file="struts-default.xml" />
+	<package name="simple" extends="struts-default">
+		<!--	
+		<action name="setScreen" class="gateAction" method="setScreen">
+			<param name="allowedTypes">image/png,image/gif,image/jpeg,image/pjpeg</param>
+			<param name="savePath">system/screen/</param>
+			<param name="maxWidthSize">600</param>
+			<param name="maxHeightSize">480</param>
+			<result name="success">system/out.jsp</result>
+			<result name="input">system/out.jsp</result>
+		</action>
+		-->
+		
+		<action name="setScreen" class="gateAction" method="setScreen">
+			<param name="allowedTypes">image/png,image/gif,image/jpeg,image/pjpeg</param>
+			<param name="savePath">system/screen/</param>
+			<param name="maxWidthSize">150</param>
+			<param name="maxHeightSize">120</param>
+			<result name="success">out.jsp</result>
+		</action>
+		
+	</package>
+	
+	<package name="json" extends="json-default">
+		
+		
+		
+	<!--	
+	<action name="saveCard" class="cardAction" method="saveCard">
+		<result type="json">
+			<param name="includeProperties">success,cardId</param>
+		</result>
+	</action>
+	<action name="deleteCard" class="cardAction" method="deleteCard">
+		<result type="json">
+			<param name="includeProperties">success</param>
+		</result>
+	</action>
+	<action name="updateCard" class="cardAction" method="updateCard">
+		<result type="json">
+			<param name="includeProperties">success</param>
+		</result>
+	</action>-->
+	<action name="findAllCategory" class="accessAction" method="findAllCategory">
+		<result type="json">
+			<param name="root">categoryList</param>
+		</result>
+	</action>
+		
+	<action name="findAllCard" class="cardAction" method="findAllCard">
+		<result type="json">
+			<param name="root">page</param>
+			<param name="excludeProperties">conditions,limit,start,success,objCondition</param>
+		</result>
+	</action> 
+	
+	<action name="saveBlock" class="blockAction" method="saveBlock">
+		<result type="json">
+			<param name="includeProperties">success,blockId</param>
+		</result>
+	</action>
+	<action name="deleteBlock" class="blockAction" method="deleteBlock">
+		<result type="json">
+			<param name="includeProperties">success</param>
+		</result>
+	</action>
+	<action name="updateBlock" class="blockAction" method="updateBlock">
+		<result type="json">
+			<param name="includeProperties">success</param>
+		</result>
+	</action>
+	<action name="findAllBlock" class="blockAction" method="findAllBlock">
+		<result type="json">
+			<param name="root">page</param>
+			<param name="excludeProperties">conditions,limit,start,success,objCondition</param>
+		</result>
+	</action>
+	
+	<!--
+	<action name="saveCycle" class="cycleAction" method="saveCycle">
+		<result type="json">
+			<param name="includeProperties">success,cycleId</param>
+		</result>
+	</action>
+	<action name="deleteCycle" class="cycleAction" method="deleteCycle">
+		<result type="json">
+			<param name="includeProperties">success</param>
+		</result>
+	</action>
+	<action name="updateCycle" class="cycleAction" method="updateCycle">
+		<result type="json">
+			<param name="includeProperties">success</param>
+		</result>
+	</action>
+	-->
+	<action name="findAllCycle" class="cycleAction" method="findAllCycle">
+		<result type="json">
+			<param name="root">page</param>
+			<param name="excludeProperties">conditions,limit,start,success,objCondition</param>
+		</result>
+	</action>
+	
+	<action name="saveWatcher" class="watcherAction" method="saveWatcher">
+		<result type="json">
+			<param name="includeProperties">success,watcherId</param>
+		</result>
+	</action>
+	<action name="deleteWatcher" class="watcherAction" method="deleteWatcher">
+		<result type="json">
+			<param name="includeProperties">success</param>
+		</result>
+	</action>
+	<action name="updateWatcher" class="watcherAction" method="updateWatcher">
+		<result type="json">
+			<param name="includeProperties">success</param>
+		</result>
+	</action>
+	<action name="findAllWatcher" class="watcherAction" method="findAllWatcher">
+		<result type="json">
+			<param name="root">page</param>
+			<param name="excludeProperties">conditions,limit,start,success,objCondition</param>
+		</result>
+	</action>
+	
+	<action name="saveTimer" class="timerAction" method="saveTimer">
+		<result type="json">
+			<param name="includeProperties">success,timerId</param>
+		</result>
+	</action>
+	<action name="deleteTimer" class="timerAction" method="deleteTimer">
+		<result type="json">
+			<param name="includeProperties">success</param>
+		</result>
+	</action>
+	<action name="updateTimer" class="timerAction" method="updateTimer">
+		<result type="json">
+			<param name="includeProperties">success</param>
+		</result>
+	</action>
+	<action name="findAllTimer" class="timerAction" method="findAllTimer">
+		<result type="json">
+			<param name="root">page</param>
+			<param name="excludeProperties">conditions,limit,start,success,objCondition</param>
+		</result>
+	</action>
+	
+	<!--
+	<action name="saveAlarm" class="alarmAction" method="saveAlarm">
+		<result type="json">
+			<param name="includeProperties">success,alarmId</param>
+		</result>
+	</action>
+	<action name="deleteAlarm" class="alarmAction" method="deleteAlarm">
+		<result type="json">
+			<param name="includeProperties">success</param>
+		</result>
+	</action>
+	<action name="updateAlarm" class="alarmAction" method="updateAlarm">
+		<result type="json">
+			<param name="includeProperties">success</param>
+		</result>
+	</action> -->
+	<action name="findAllAlarm" class="alarmAction" method="findAllAlarm">
+		<result type="json">
+			<param name="root">page</param>
+			<param name="excludeProperties">conditions,limit,start,success,objCondition</param>
+		</result>
+	</action>
+	
+	<action name="findAllImage" class="alarmAction" method="findAllImage">
+		<result type="json">
+			<param name="root">page</param>
+			<param name="excludeProperties">conditions,limit,start,success,objCondition</param>
+		</result>
+	</action>
+	
+	<!--
+	<action name="saveAccess" class="accessAction" method="saveAccess">
+		<result type="json">
+			<param name="includeProperties">success,accessId</param>
+		</result>
+	</action>
+	<action name="deleteAccess" class="accessAction" method="deleteAccess">
+		<result type="json">
+			<param name="includeProperties">success</param>
+		</result>
+	</action>
+	<action name="updateAccess" class="accessAction" method="updateAccess">
+		<result type="json">
+			<param name="includeProperties">success</param>
+		</result>
+	</action>
+	-->
+	<action name="findAllAccess" class="accessAction" method="findAllAccess">
+		<result type="json">
+			<param name="ignoreHierarchy">false</param>
+			<param name="root">accessPage</param>
+			<param name="excludeProperties">filter,key,valueList,parentList,startDate,endDate,conditions,limit,start,success,objCondition</param>
+		</result>
+	</action>
+	
+	<action name="findAccess" class="accessAction" method="findAccess">
+		<result type="json">
+			<param name="ignoreHierarchy">false</param>
+			<param name="root">accessPage</param>
+			<param name="excludeProperties">key,valueList,parentList,startDate,endDate,conditions,limit,start,success,objCondition</param>
+		</result>
+	</action>
+	
+	<action name="findAccessCount" class="accessAction" method="findAccessCount">
+		<result type="json">
+			<param name="root">accessData</param>
+			<param name="excludeProperties">key,valueList,parentList,startDate,endDate,name</param>
+		</result>
+	</action>
+	
+	<action name="findAggregation" class="accessAction" method="findAggregation">
+		<result type="json">
+			<param name="root">data</param>
+			<param name="excludeProperties">start,end,groupColumn</param>
+		</result>
+	</action>
+	
+	<action name="findAllScreen" class="gateAction" method="findAllScreen">
+		<result type="json">
+			<param name="root">page</param>
+			<param name="excludeProperties">conditions,limit,start,success,objCondition</param>
+		</result>
+	</action>
+	
+	<action name="setGate" class="gateAction" method="setGate">
+		<result type="json">
+			<param name="includeProperties">success,errMsg</param>
+		</result>
+	</action>
+	
+	<action name="clearGateSreen" class="gateAction" method="clearGateSreen">
+		<result type="json">
+			<param name="includeProperties">success,errMsg</param>
+		</result>
+	</action>
+	
+	<action name="setGateSreen" class="gateAction" method="setGateSreen">
+		<result type="json">
+			<param name="includeProperties">success,errMsg</param>
+		</result>
+	</action>
+	
+	<action name="saveGate" class="gateAction" method="saveGate">
+		<result type="json">
+			<param name="includeProperties">success,gateId</param>
+		</result>
+	</action>
+	<action name="deleteGate" class="gateAction" method="deleteGate">
+		<result type="json">
+			<param name="includeProperties">success</param>
+		</result>
+	</action>
+	<action name="updateGate" class="gateAction" method="updateGate">
+		<result type="json">
+			<param name="includeProperties">success</param>
+		</result>
+	</action><!---->
+	<action name="findAllGate" class="gateAction" method="findAllGate">
+		<result type="json">
+			<param name="root">page</param>
+			<param name="excludeProperties">conditions,limit,start,success,objCondition</param>
+		</result>
+	</action>
+		
+	<action name="savePrivassign" class="privassignAction" method="savePrivassign">
+		<result type="json">
+			<param name="includeProperties">success,privassignId</param>
+		</result>
+	</action>
+	<action name="deletePrivassign" class="privassignAction" method="deletePrivassign">
+		<result type="json">
+			<param name="includeProperties">success</param>
+		</result>
+	</action>
+	<!--
+	<action name="updatePrivassign" class="privassignAction" method="updatePrivassign">
+		<result type="json">
+			<param name="includeProperties">success</param>
+		</result>
+	</action>
+	-->
+	<action name="findAllPrivassign" class="privassignAction" method="findAllPrivassign">
+		<result type="json">
+			<param name="root">page</param>
+			<param name="excludeProperties">conditions,limit,start,success,objCondition</param>
+		</result>
+	</action>
+	
+	<!--
+	<action name="savePriv" class="privAction" method="savePriv">
+		<result type="json">
+			<param name="includeProperties">success,privId</param>
+		</result>
+	</action>
+	<action name="deletePriv" class="privAction" method="deletePriv">
+		<result type="json">
+			<param name="includeProperties">success</param>
+		</result>
+	</action>
+	<action name="updatePriv" class="privAction" method="updatePriv">
+		<result type="json">
+			<param name="includeProperties">success</param>
+		</result>
+	</action>
+	-->
+	
+	<action name="findAllPriv" class="privAction" method="findAllPriv">
+		<result type="json">
+			<param name="root">page</param>
+			<param name="excludeProperties">conditions,limit,start,success,objCondition</param>
+		</result>
+	</action>
+	
+	<action name="saveGroup" class="groupAction" method="saveGroup">
+		<result type="json">
+			<param name="includeProperties">success,groupId</param>
+		</result>
+	</action>
+	<action name="deleteGroup" class="groupAction" method="deleteGroup">
+		<result type="json">
+			<param name="includeProperties">success,msg</param>
+		</result>
+	</action>
+	<action name="updateGroup" class="groupAction" method="updateGroup">
+		<result type="json">
+			<param name="includeProperties">success</param>
+		</result>
+	</action>
+	<action name="findAllGroup" class="groupAction" method="findAllGroup">
+		<result type="json">
+			<param name="root">page</param>
+			<param name="excludeProperties">conditions,limit,start,success,objCondition</param>
+		</result>
+	</action>
+	
+		<action name="saveUser" class="userAction" method="saveUser">
+			<result type="json">
+				<param name="includeProperties">success,userId</param>
+			</result>
+		</action>
+		<action name="existUserName" class="userAction" method="findExistUserName">
+			<result type="json">
+				<param name="includeProperties">success</param>
+			</result>
+		</action>
+		<action name="deleteUser" class="userAction" method="deleteUser">
+			<result type="json">
+				<param name="includeProperties">success</param>
+			</result>
+		</action>
+		<action name="updateUser" class="userAction" method="updateUser">
+			<result type="json">
+				<param name="includeProperties">success</param>
+			</result>
+		</action>
+		<action name="findAllUser" class="userAction" method="findAllUser">
+			<result type="json">
+				<param name="root">page</param>
+				<param name="excludeProperties">conditions,limit,start,success,objCondition</param>
+			</result>
+		</action>
+		
+		<action name="login" class="sysAction" method="login">
+			<result type="json">
+				<param name="includeProperties">success,msg,user\.userName,user\.userId,user\.groupId,user\.groupName</param>
+			</result>
+		</action>
+		<action name="logout" class="sysAction" method="logout">
+			<result type="json">
+				<param name="includeProperties">success,msg</param>
+			</result>
+		</action>
+		
+		<action name="findModule" class="sysAction" method="findModule">
+			<result type="json">
+				<param name="root">modList</param>
+			</result>
+		</action>
+		
+	</package>
+</struts>

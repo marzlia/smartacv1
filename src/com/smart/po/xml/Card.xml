@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Card">
+	<typeAlias alias="card" type="com.smart.po.Card" />
+	<typeAlias alias="page" type="com.smart.core.Page" />
+
+	<parameterMap class="card" id="pm_card_without_id">
+		<parameter property="cardNo" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="cardName" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="cardSex" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="cardType" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="cardClass" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="cardMajor" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="cardDepartment" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="cardInstitute" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="cardGrade" javaType="integer" jdbcType="NUMBER" />
+		<parameter property="cardComment" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="cardUpdate" javaType="integer" jdbcType="NUMBER" />
+		<parameter property="cardStatus" javaType="integer" jdbcType="NUMBER" />
+	</parameterMap>
+	<sql id="byCardIdCondition"><![CDATA[cardId = #cardId:NUMBER#]]></sql>
+
+	<insert id="save" parameterMap="pm_card_without_id">
+		<![CDATA[
+			INSERT INTO t_card 
+					(cardNo,cardName,cardSex,cardType,cardClass,cardMajor,cardDepartment,cardInstitute,cardGrade,cardComment,cardUpdate,cardStatus)
+				VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+		]]>
+		<selectKey resultClass="int">
+			<![CDATA[
+				SELECT @@IDENTITY AS ID
+			]]>
+		</selectKey>
+	</insert>
+
+	<delete id="deleteById" parameterClass="integer">
+		<![CDATA[
+			delete from t_card
+		]]>
+		<dynamic prepend="where">
+			<include refid="byCardIdCondition" />
+		</dynamic>
+	</delete>
+
+	<update id="update" parameterClass="card">
+		<![CDATA[UPDATE t_card]]>
+		<dynamic prepend="SET">
+			<isNotNull property="cardNo" prepend=",">
+				<![CDATA[
+					cardNo = #cardNo:VARCHAR#
+				]]>
+			</isNotNull>
+			<isNotNull property="cardName" prepend=",">
+				<![CDATA[
+					cardName = #cardName:VARCHAR#
+				]]>
+			</isNotNull>
+			<isNotNull property="cardSex" prepend=",">
+				<![CDATA[
+					cardSex = #cardSex:VARCHAR#
+				]]>
+			</isNotNull>
+			<isNotNull property="cardType" prepend=",">
+				<![CDATA[
+					cardType = #cardType:VARCHAR#
+				]]>
+			</isNotNull>
+			<isNotNull property="cardClass" prepend=",">
+				<![CDATA[
+					cardClass = #cardClass:VARCHAR#
+				]]>
+			</isNotNull>
+			<isNotNull property="cardMajor" prepend=",">
+				<![CDATA[
+					cardMajor = #cardMajor:VARCHAR#
+				]]>
+			</isNotNull>
+			<isNotNull property="cardDepartment" prepend=",">
+				<![CDATA[
+					cardDepartment = #cardDepartment:VARCHAR#
+				]]>
+			</isNotNull>
+			<isNotNull property="cardInstitute" prepend=",">
+				<![CDATA[
+					cardInstitute = #cardInstitute:VARCHAR#
+				]]>
+			</isNotNull>
+			<isNotNull property="cardGrade" prepend=",">
+				<![CDATA[
+					cardGrade = #cardGrade:NUMBER#
+				]]>
+			</isNotNull>
+			<isNotNull property="cardComment" prepend=",">
+				<![CDATA[
+					cardComment = #cardComment:VARCHAR#
+				]]>
+			</isNotNull>
+			<isNotNull property="cardUpdate" prepend=",">
+				<![CDATA[
+					cardUpdate = #cardUpdate:NUMBER#
+				]]>
+			</isNotNull>
+			<isNotNull property="cardStatus" prepend=",">
+				<![CDATA[
+					cardStatus = #cardStatus:NUMBER#
+				]]>
+			</isNotNull>
+		</dynamic>
+		<dynamic prepend="where">
+			<include refid="byCardIdCondition" />
+		</dynamic>
+	</update>
+
+	<sql id="findCardByPageCondition">
+		<isNotEmpty property="conditions">
+			<iterate property="conditions" open="(" close=")" conjunction="OR">
+				<![CDATA[
+					upper(cardNo) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardName) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardSex) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardType) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardClass) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardMajor) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardDepartment) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardInstitute) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(cardComment) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+				]]>
+			</iterate>
+		</isNotEmpty>
+	</sql>
+
+	<select id="findByPage" parameterClass="page" resultClass="card">
+		<![CDATA[
+			SELECT  * FROM t_card 
+			WHERE (SELECT cardId from t_block where t_block.cardId=t_card.cardId LIMIT 1) IS NULL 
+		]]>
+		<dynamic prepend="AND">
+			<include refid="findCardByPageCondition" />
+		</dynamic>
+		<![CDATA[
+			ORDER BY $objCondition$ LIMIT $start$,$limit$
+		]]>
+	</select>
+
+	<select id="findByCount" parameterClass="page" resultClass="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_card
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findCardByPageCondition" />
+		</dynamic>
+	</select>
+</sqlMap>

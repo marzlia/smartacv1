@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Group">
+	<typeAlias alias="group" type="com.smart.po.Group" />
+	<typeAlias alias="page" type="com.smart.core.Page" />
+
+	<parameterMap class="group" id="pm_group_without_id">
+		<parameter property="groupName" />
+	</parameterMap>
+	<sql id="byGroupIdCondition"><![CDATA[groupId = #groupId:NUMBER#]]></sql>
+
+	<insert id="save" parameterMap="pm_group_without_id">
+		<![CDATA[
+			INSERT INTO t_group 
+					(groupName)
+				VALUES (?)
+		]]>
+		<selectKey resultClass="int">
+			<![CDATA[
+				SELECT @@IDENTITY AS ID
+			]]>
+		</selectKey>
+	</insert>
+
+	<delete id="deleteById" parameterClass="integer">
+		<![CDATA[
+			delete from t_group
+		]]>
+		<dynamic prepend="where">
+			<include refid="byGroupIdCondition" />
+		</dynamic>
+	</delete>
+
+	<update id="update" parameterClass="group">
+		<![CDATA[UPDATE t_group]]>
+		<dynamic prepend="SET">
+			<isNotNull property="groupName" prepend=",">
+				<![CDATA[
+					groupName = #groupName:VARCHAR#
+				]]>
+			</isNotNull>
+		</dynamic>
+		<dynamic prepend="where">
+			<include refid="byGroupIdCondition" />
+		</dynamic>
+	</update>
+
+	<sql id="findGroupByPageCondition">
+		<isNotEmpty property="conditions">
+			<iterate property="conditions" open="(" close=")" conjunction="OR">
+				<![CDATA[
+					upper(groupName) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+				]]>
+			</iterate>
+		</isNotEmpty>
+	</sql>
+	
+	<sql id="findGroupSortBy">
+		<isNotNull property="objCondition">
+			<![CDATA[
+				ORDER BY $objCondition$
+			]]>
+		</isNotNull>
+	</sql>
+
+	<select id="findByPage" parameterClass="page" resultClass="group">
+		<![CDATA[
+			SELECT  * FROM t_group 
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findGroupByPageCondition" />
+		</dynamic>
+		<![CDATA[
+			ORDER BY $objCondition$ LIMIT $start$,$limit$ 
+		]]>
+	</select>
+
+	<select id="findByCount" parameterClass="page" resultClass="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_group
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findGroupByPageCondition" />
+		</dynamic>
+	</select>
+</sqlMap>

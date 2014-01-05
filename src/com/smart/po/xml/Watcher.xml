@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Watcher">
+	<typeAlias alias="watcher" type="com.smart.po.Watcher" />
+	<typeAlias alias="page" type="com.smart.core.Page" />
+
+	<parameterMap class="watcher" id="pm_watcher_without_id">
+		<parameter property="watcherIp" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="watcherMac" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="watcherCampus" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="watcherRoom" javaType="string" jdbcType="VARCHAR" />
+	</parameterMap>
+	<sql id="byWatcherIdCondition"><![CDATA[watcherId = #watcherId:NUMBER#]]></sql>
+
+	<insert id="save" parameterMap="pm_watcher_without_id">
+		<![CDATA[
+			INSERT INTO t_watcher 
+					(watcherIp,watcherMac,watcherCampus,watcherRoom)
+				VALUES (?,?,?,?)
+		]]>
+		<selectKey resultClass="int">
+			<![CDATA[
+				SELECT @@IDENTITY AS ID
+			]]>
+		</selectKey>
+	</insert>
+
+	<delete id="deleteById" parameterClass="integer">
+		<![CDATA[
+			delete from t_watcher
+		]]>
+		<dynamic prepend="where">
+			<include refid="byWatcherIdCondition" />
+		</dynamic>
+	</delete>
+
+	<update id="update" parameterClass="watcher">
+		<![CDATA[UPDATE t_watcher]]>
+		<dynamic prepend="SET">
+			<isNotNull property="watcherIp" prepend=",">
+				<![CDATA[
+					watcherIp = #watcherIp:VARCHAR#
+				]]>
+			</isNotNull>
+			<isNotNull property="watcherMac" prepend=",">
+				<![CDATA[
+					watcherIp = #watcherMac:VARCHAR#
+				]]>
+			</isNotNull>
+			<isNotNull property="watcherCampus" prepend=",">
+				<![CDATA[
+					watcherCampus = #watcherCampus:VARCHAR#
+				]]>
+			</isNotNull>
+			<isNotNull property="watcherRoom" prepend=",">
+				<![CDATA[
+					watcherRoom = #watcherRoom:VARCHAR#
+				]]>
+			</isNotNull>
+		</dynamic>
+		<dynamic prepend="where">
+			<include refid="byWatcherIdCondition" />
+		</dynamic>
+	</update>
+
+	<sql id="findWatcherByPageCondition">
+		<isNotEmpty property="conditions">
+			<iterate property="conditions" open="(" close=")" conjunction="OR">
+				<![CDATA[
+					upper(watcherIp) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(watcherCampus) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(watcherRoom) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+				]]>
+			</iterate>
+		</isNotEmpty>
+	</sql>
+
+	<select id="findByPage" parameterClass="page" resultClass="watcher">
+		<![CDATA[
+			SELECT  * FROM t_watcher 
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findWatcherByPageCondition" />
+		</dynamic>
+		<![CDATA[
+			ORDER BY $objCondition$ LIMIT $start$,$limit$
+		]]>
+	</select>
+
+	<select id="findByCount" parameterClass="page" resultClass="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_watcher
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findWatcherByPageCondition" />
+		</dynamic>
+	</select>
+</sqlMap>

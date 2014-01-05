@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Cycle">
+	<typeAlias alias="cycle" type="com.smart.po.Cycle" />
+	<typeAlias alias="page" type="com.smart.core.Page" />
+
+	<parameterMap class="cycle" id="pm_cycle_without_id">
+		<parameter property="cycleName" javaType="string" jdbcType="VARCHAR" />
+	</parameterMap>
+	<sql id="byCycleIdCondition"><![CDATA[cycleId = #cycleId:NUMBER#]]></sql>
+
+	<insert id="save" parameterMap="pm_cycle_without_id">
+		<![CDATA[
+			INSERT INTO t_cycle 
+					(cycleName)
+				VALUES (?)
+		]]>
+		<selectKey resultClass="int">
+			<![CDATA[
+				SELECT @@IDENTITY AS ID
+			]]>
+		</selectKey>
+	</insert>
+
+	<delete id="deleteById" parameterClass="integer">
+		<![CDATA[
+			delete from t_cycle
+		]]>
+		<dynamic prepend="where">
+			<include refid="byCycleIdCondition" />
+		</dynamic>
+	</delete>
+
+	<update id="update" parameterClass="cycle">
+		<![CDATA[UPDATE t_cycle]]>
+		<dynamic prepend="SET">
+			<isNotNull property="cycleName" prepend=",">
+				<![CDATA[
+					cycleName = #cycleName:VARCHAR#
+				]]>
+			</isNotNull>
+		</dynamic>
+		<dynamic prepend="where">
+			<include refid="byCycleIdCondition" />
+		</dynamic>
+	</update>
+
+	<sql id="findCycleByPageCondition">
+		<isNotEmpty property="conditions">
+			<iterate property="conditions" open="(" close=")" conjunction="OR">
+				<![CDATA[
+					upper(cycleName) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+				]]>
+			</iterate>
+		</isNotEmpty>
+	</sql>
+
+	<select id="findByPage" parameterClass="page" resultClass="cycle">
+		<![CDATA[
+			SELECT  * FROM t_cycle 
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findCycleByPageCondition" />
+		</dynamic>
+		<![CDATA[
+			ORDER BY cycleId LIMIT $start$,$limit$
+		]]>
+	</select>
+
+	<select id="findByCount" parameterClass="page" resultClass="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_cycle
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findCycleByPageCondition" />
+		</dynamic>
+	</select>
+</sqlMap>

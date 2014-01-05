@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Alarm">
+	<typeAlias alias="alarm" type="com.smart.po.Alarm" />
+	<typeAlias alias="page" type="com.smart.core.Page" />
+
+	<parameterMap class="alarm" id="pm_alarm_without_id">
+		<parameter property="gateId" javaType="integer" jdbcType="NUMBER" />
+		<parameter property="alarmDatetime" />
+		<parameter property="alarmType" javaType="integer" jdbcType="NUMBER" />
+		<parameter property="alarmComment" javaType="string" jdbcType="VARCHAR" />
+	</parameterMap>
+	<sql id="byAlarmIdCondition"><![CDATA[alarmId = #alarmId:NUMBER#]]></sql>
+
+	<insert id="save" parameterMap="pm_alarm_without_id">
+		<![CDATA[
+			INSERT INTO t_alarm 
+					(gateId,alarmDatetime,alarmType,alarmComment)
+				VALUES (?,?,?,?)
+		]]>
+		<selectKey resultClass="int">
+			<![CDATA[
+				SELECT @@IDENTITY AS ID
+			]]>
+		</selectKey>
+	</insert>
+
+	<delete id="deleteById" parameterClass="integer">
+		<![CDATA[
+			delete from t_alarm
+		]]>
+		<dynamic prepend="where">
+			<include refid="byAlarmIdCondition" />
+		</dynamic>
+	</delete>
+
+	<update id="update" parameterClass="alarm">
+		<![CDATA[UPDATE t_alarm]]>
+		<dynamic prepend="SET">
+			<isNotNull property="gateId" prepend=",">
+				<![CDATA[
+					gateId = #gateId:NUMBER#
+				]]>
+			</isNotNull>
+			<isNotNull property="alarmDatetime" prepend=",">
+				
+			</isNotNull>
+			<isNotNull property="alarmType" prepend=",">
+				<![CDATA[
+					alarmType = #alarmType:NUMBER#
+				]]>
+			</isNotNull>
+			<isNotNull property="alarmComment" prepend=",">
+				<![CDATA[
+					alarmComment = #alarmComment:VARCHAR#
+				]]>
+			</isNotNull>
+		</dynamic>
+		<dynamic prepend="where">
+			<include refid="byAlarmIdCondition" />
+		</dynamic>
+	</update>
+
+	<sql id="findAlarmByPageCondition">
+		<isNotEmpty property="conditions">
+			<iterate property="conditions" open="(" close=")" conjunction="OR">
+				<![CDATA[
+					upper(alarmComment) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(gateIp) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(gateCampus) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+					OR upper(gateRoom) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+				]]>
+			</iterate>
+		</isNotEmpty>
+		<isNotNull property="objCondition.type" prepend="AND">
+				<![CDATA[
+					alarmType & #objCondition.type:NUMBER# = #objCondition.type:NUMBER#
+				]]>
+		</isNotNull>
+	</sql>
+
+	<select id="findByPage" parameterClass="page" resultClass="alarm">
+		<![CDATA[
+			SELECT  * FROM v_alarm 
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findAlarmByPageCondition" />
+		</dynamic>
+		<![CDATA[
+			ORDER BY $objCondition.sort$ LIMIT $start$,$limit$
+		]]>
+	</select>
+
+	<select id="findByCount" parameterClass="page" resultClass="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM v_alarm
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findAlarmByPageCondition" />
+		</dynamic>
+	</select>
+</sqlMap>

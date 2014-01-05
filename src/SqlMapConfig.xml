@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMapConfig      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+	<settings cacheModelsEnabled="true" enhancementEnabled="true" lazyLoadingEnabled="true"
+		maxRequests="32" maxSessions="10" maxTransactions="5" useStatementNamespaces="true" />
+	<sqlMap resource="com/smart/po/xml/Sys.xml" />
+	
+	<sqlMap resource="com/smart/po/xml/User.xml" />
+	
+	<sqlMap resource="com/smart/po/xml/Group.xml" />
+	
+	<sqlMap resource="com/smart/po/xml/Priv.xml" />
+	
+	<sqlMap resource="com/smart/po/xml/Privassign.xml" />
+	
+	<sqlMap resource="com/smart/po/xml/Gate.xml" />
+	
+	<sqlMap resource="com/smart/po/xml/Access.xml" />
+	
+	<sqlMap resource="com/smart/po/xml/Alarm.xml" />
+	
+	<sqlMap resource="com/smart/po/xml/Timer.xml" />
+	
+	<sqlMap resource="com/smart/po/xml/Cycle.xml" />
+	
+	<sqlMap resource="com/smart/po/xml/Watcher.xml" />
+	
+	<sqlMap resource="com/smart/po/xml/Block.xml" />
+	
+	<sqlMap resource="com/smart/po/xml/Card.xml" />
+</sqlMapConfig>

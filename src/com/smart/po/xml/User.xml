@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="User">
+	<typeAlias alias="user" type="com.smart.po.User" />
+	<typeAlias alias="page" type="com.smart.core.Page" />
+
+	<parameterMap class="user" id="pm_user_without_id">
+		<parameter property="userName" />
+		<parameter property="userPassword" />
+		<parameter property="groupId" javaType="integer" jdbcType="NUMBER" />
+	</parameterMap>
+	<sql id="byUserIdCondition"><![CDATA[userId = #userId:NUMBER#]]></sql>
+
+	<insert id="save" parameterMap="pm_user_without_id">
+		<![CDATA[
+			INSERT INTO t_user 
+					(userName,userPassword,groupId)
+				VALUES (?,?,?)
+		]]>
+		<selectKey resultClass="int">
+			<![CDATA[
+				SELECT @@IDENTITY AS ID
+			]]>
+		</selectKey>
+	</insert>
+
+	<delete id="deleteById" parameterClass="integer">
+		<![CDATA[
+			delete from t_user
+		]]>
+		<dynamic prepend="where">
+			<include refid="byUserIdCondition" />
+		</dynamic>
+	</delete>
+
+	<update id="update" parameterClass="user">
+		<![CDATA[UPDATE t_user]]>
+		<dynamic prepend="SET">
+			<isNotNull property="userName" prepend=",">
+				<![CDATA[
+					userName = #userName:VARCHAR#
+				]]>
+			</isNotNull>
+			<isNotNull property="userPassword" prepend=",">
+				<![CDATA[
+					userPassword = #userPassword:VARCHAR#
+				]]>
+			</isNotNull>
+			<isNotNull property="groupId" prepend=",">
+				<![CDATA[
+					groupId = #groupId:NUMBER#
+				]]>
+			</isNotNull>
+		</dynamic>
+		<dynamic prepend="where">
+			<include refid="byUserIdCondition" />
+		</dynamic>
+	</update>
+
+	<sql id="findUserByPageCondition">
+		<isNotEmpty property="conditions">
+			<iterate property="conditions" open="(" close=")" conjunction="OR">
+				<![CDATA[
+					upper(userName) LIKE concat('%',upper(#conditions[]:VARCHAR#),'%')
+				]]>
+			</iterate>
+		</isNotEmpty>
+	</sql>
+	
+	<select id="findByPage" parameterClass="page" resultClass="user">
+		<![CDATA[
+			SELECT  * FROM v_user 
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findUserByPageCondition" />
+		</dynamic>
+		<![CDATA[
+			ORDER BY userId LIMIT $start$,$limit$
+		]]>
+	</select>
+
+	<select id="findByCount" parameterClass="page" resultClass="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_user
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findUserByPageCondition" />
+		</dynamic>
+	</select>
+	
+	<select id="findByGroup" parameterClass="integer" resultClass="integer">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_user
+		]]>
+		<dynamic prepend="WHERE">
+			<![CDATA[groupId = #groupId:NUMBER#]]>
+		</dynamic>
+	</select>
+	
+	<select id="findUserByName" parameterClass="user" resultClass="user">
+		<![CDATA[
+			SELECT * FROM t_user
+		]]>
+		<dynamic prepend="WHERE">
+			<isNotNull property="userName" prepend="AND">
+				<![CDATA[
+					userName = #userName:VARCHAR#
+				]]>
+			</isNotNull>
+			<isNotNull property="userId" prepend="AND">
+				<![CDATA[
+					userId != #userId:NUMBER#
+				]]>
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+</sqlMap>

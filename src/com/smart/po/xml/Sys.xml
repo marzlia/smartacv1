@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Sys">
+	<typeAlias alias="user" type="com.smart.po.User" />
+	
+	<select id="login" parameterClass="user" resultClass="user">
+		<![CDATA[
+			SELECT * FROM v_user 
+					WHERE userName = #userName:VARCHAR# and userPassword = #userPassword:VARCHAR# limit 0,1
+		]]>
+	</select>
+	
+	<select id="findUserPriv" parameterClass="integer" resultClass="string">
+		<![CDATA[
+			SELECT privName FROM v_userpriv WHERE userId = #userId:NUMBER#
+		]]>
+	</select>
+	
+</sqlMap>
