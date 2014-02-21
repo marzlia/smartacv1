@@ -10,7 +10,7 @@
 	  </description>
 	  
 	<welcome-file-list>
-	  <welcome-file>system/index.jsp</welcome-file>
+	  <welcome-file>index.jsp</welcome-file>
  	</welcome-file-list>
 
 	<session-config>

@@ -214,6 +214,8 @@ public class AccessAction extends BaseAction {
 
 	//通关----find
 	public String findAllAccess() {
+		
+		if(logger.isDebugEnabled()) logger.debug("Enter into findAllAccess");
 
 		accessPage = new AccessPage();
 		
@@ -224,11 +226,12 @@ public class AccessAction extends BaseAction {
 			//JSONObject jsonObj = JSONObject.fromObject(filter);
 			JSONArray jsonArr = JSONArray.fromObject(filter);
 			int filterSize = jsonArr.size();
-			logger.debug("Get " + filterSize + " filters");
+			if(logger.isDebugEnabled()) logger.debug("Get " + filterSize + " filters");
 			
 			for (int i=0; i<filterSize; i++){
 				JSONObject jsonObj = JSONObject.fromObject(jsonArr.get(i));
-				logger.debug((i+1) + ": " + jsonObj);
+				if(logger.isDebugEnabled())
+					logger.debug((i+1) + ": " + jsonObj);
 				
 				try{
 					String filterType = jsonObj.getString("type");
@@ -275,7 +278,7 @@ public class AccessAction extends BaseAction {
 					}
 				
 				} catch(net.sf.json.JSONException e){
-					logger.debug(e.getMessage());
+					logger.error(e.getMessage());
 					e.printStackTrace();
 				}
 			}
@@ -285,12 +288,15 @@ public class AccessAction extends BaseAction {
 		
 		
 		
-		//String startDate = getRequest().getParameter("startDate") == null ? "" : getRequest().getParameter("startDate");
-		//String endDate = getRequest().getParameter("endDate") == null ? "" : getRequest().getParameter("endDate");
+		String startDate = getRequest().getParameter("startDate") == null ? "" : getRequest().getParameter("startDate");
+		String endDate = getRequest().getParameter("endDate") == null ? "" : getRequest().getParameter("endDate");
+		
+		accessPage.setStartDate(startDate);
+		accessPage.setEndDate(endDate);
 		
 		String sort = getRequest().getParameter("sort") == null ? "accessId" : getRequest().getParameter("sort");
 		String dir = getRequest().getParameter("dir") == null ? "ASC" : getRequest().getParameter("dir");
-		logger.debug("Sort access by: " + sort + " " +dir);
+		if(logger.isDebugEnabled()) logger.debug("Sort access by: " + sort + " " +dir);
 		accessPage.setObjCondition(sort + " " + dir);
 		
 		String strCondition = getRequest().getParameter("conditions") == null? "" :getRequest().getParameter("conditions");
@@ -303,6 +309,9 @@ public class AccessAction extends BaseAction {
 		accessPage.setStart(start);
 		accessPage.setLimit(limit = limit == 0 ? 20 : limit);
 		accessPage = accessService.findByAccessPage(accessPage);
+		
+		
+		if(logger.isDebugEnabled()) logger.debug("Exit findAllAccess");
 		
 		return SUCCESS;
 	}

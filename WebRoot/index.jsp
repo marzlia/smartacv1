@@ -98,7 +98,11 @@
  
 <script type="text/javascript" src="./resources/extjs/ux/TabCloseMenu.js"></script>
 <script type="text/javascript" src="./resources/extjs/ux/RowExpander.js"></script>
+
+<!-- 
 <script type="text/javascript" src="./resources/extjs/ux/Exporter-all.js"></script>
+ -->
+ 
 <script type="text/javascript" src="./resources/extjs/ux/statusbar/StatusBar.js"> </script>
 <script type="text/javascript" src="./resources/extjs/ux/statusbar/ValidationStatus.js"> </script>
 <script type="text/javascript" src="./resources/extjs/ux/gridfilters/menu/RangeMenu.js"></script>
@@ -110,6 +114,8 @@
 <script type="text/javascript" src="./resources/extjs/ux/gridfilters/filter/ListFilter.js"></script>
 <script type="text/javascript" src="./resources/extjs/ux/gridfilters/filter/NumericFilter.js"></script>
 <script type="text/javascript" src="./resources/extjs/ux/gridfilters/filter/BooleanFilter.js"></script>
+<script type="text/javascript" src="./resources/extjs/ux/gridfilters/locale/GridFilters-lang-zh_CN.js"></script>
+
 <script type="text/javascript" src="./resources/extjs/ux/fileuploadfield/FileUploadField.js"></script>
 <script type="text/javascript" src="./resources/extjs/locale/ext-lang-zh_CN.js"></script>
 

@@ -277,9 +277,3 @@ if(Ext.ux.TabCloseMenu){
       closeAllTabsText : "关闭所有标签页"
    });
 }
-
-if(Ext.ux.grid.GridFilters){
-	Ext.apply(Ext.ux.grid.GridFilters.prototype, {
-      menuFilterText : '过滤条件'
-   });
-}

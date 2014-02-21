@@ -41,7 +41,7 @@ Smart.Accessview = function (){
             allowBlank: false,
             blankText: '起始时间',
      		emptyText: '请输入起始时间',
-     		width : 130
+     		width : 140
         },
         '至',
         {
@@ -53,13 +53,12 @@ Smart.Accessview = function (){
             allowBlank: false,
             blankText: '结束时间',
      		emptyText: '请输入结束时间',
-     		width : 130
+     		width : 140
         },'-', {
 			text : '查询',
 			iconCls : 'icon-search',
 			handler : function() {
 						
-					//alert(Ext.getCmp('start-date').value);
 					this.activeStore.baseParams.startDate = Ext.getCmp('start-date').value;
 					this.activeStore.baseParams.endDate = Ext.getCmp('end-date').value;
 					this.activeStore.load();

@@ -161,7 +161,7 @@ Smart.Accessdetail = function(config){
 			store : this.store,
 			displayInfo : true,
 			displayMsg : '第 {0} - {1} 条 共 {2} 条',
-			//plugins: [this.filters],
+			plugins: [this.filters],
 			emptyMsg : "没有记录"
 		},
 		listeners: {
@@ -201,7 +201,7 @@ Ext.extend(Smart.Accessdetail, Ext.grid.GridPanel, {
 						}
 					,
 					scope: this
-				}/*,
+				}/**/,
 				'-',
 				{
 					//xtype : 'exportbutton',
@@ -212,7 +212,7 @@ Ext.extend(Smart.Accessdetail, Ext.grid.GridPanel, {
 							
 					}, 
 					scope: this
-				}*/
+				}
 				]
 	    });
 				
