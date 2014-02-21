@@ -288,11 +288,11 @@ public class AccessAction extends BaseAction {
 		
 		
 		
-		String startDate = getRequest().getParameter("startDate") == null ? "" : getRequest().getParameter("startDate");
-		String endDate = getRequest().getParameter("endDate") == null ? "" : getRequest().getParameter("endDate");
+		//String startDate = getRequest().getParameter("startDate") == null ? "" : getRequest().getParameter("startDate");
+		//String endDate = getRequest().getParameter("endDate") == null ? "" : getRequest().getParameter("endDate");
 		
-		accessPage.setStartDate(startDate);
-		accessPage.setEndDate(endDate);
+		//accessPage.setStartDate(startDate);
+		//accessPage.setEndDate(endDate);
 		
 		String sort = getRequest().getParameter("sort") == null ? "accessId" : getRequest().getParameter("sort");
 		String dir = getRequest().getParameter("dir") == null ? "ASC" : getRequest().getParameter("dir");
